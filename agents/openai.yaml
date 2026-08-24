@@ -1,0 +1,4 @@
+interface:
+  display_name: "H3 Realistic Close-up Dialogue"
+  short_description: "Create realistic H3 facial close-up dialogue prompts"
+  default_prompt: "Use $h3-realistic-closeup-dialogue to turn my character reference and short line into a bilingual H3 production prompt."
