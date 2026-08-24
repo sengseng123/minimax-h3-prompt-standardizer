@@ -1,4 +1,4 @@
 interface:
-  display_name: "H3 Realistic Close-up Dialogue"
-  short_description: "Create realistic H3 facial close-up dialogue prompts"
-  default_prompt: "Use $h3-realistic-closeup-dialogue to turn my character reference and short line into a bilingual H3 production prompt."
+  display_name: "MiniMax H3 提示词规范器"
+  short_description: "把一句话、提示词或故事整理成可直接生成的 H3 提示词"
+  default_prompt: "使用 $minimax-h3-prompt-standardizer，把我的想法整理成面向小白、可直接复制到 MiniMax H3 的规范视频提示词。"

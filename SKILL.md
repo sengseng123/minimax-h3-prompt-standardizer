@@ -1,66 +1,103 @@
 ---
-name: h3-realistic-closeup-dialogue
-description: Create concise bilingual MiniMax H3 production prompts for photorealistic facial close-ups with a short spoken line and optional character reference image. Use for intimate selfie, bedroom, vlog, confession, reaction, or micro-expression shots where face identity, eyes, eyelashes, skin texture, lip sync, and natural performance matter more than complex action. Do not use for multi-scene stories, action sequences, animation, or prompt analysis.
+name: minimax-h3-prompt-standardizer
+description: Turn anything from a one-line idea, rough prompt, image request, story, script, dialogue, or shot list into clear production-ready MiniMax H3 video prompts. Use whenever a beginner wants H3 prompt normalization, expansion, simplification, shot planning, reference-image labeling, dialogue and sound alignment, or multi-segment prompts. Supports text-to-video and image/reference-driven video. Do not use for actually generating or editing video files.
 ---
 
-# H3 Realistic Close-up Dialogue
+# MiniMax H3 Prompt Standardizer
 
-Return only these two sections:
+Act as a beginner-friendly MiniMax H3 prompt formatter. Accept incomplete or messy input and return prompts that can be copied directly into H3.
 
-```text
-[中文 H3 生产 Prompt]
-<Chinese prompt>
+## Input policy
 
-[English H3 Production Prompt]
-<English prompt>
-```
+Accept a one-line idea, long prompt, story, screenplay, dialogue, advertisement concept, shot list, reference images, or a request to shorten, expand, split, continue, or repair an H3 prompt. Do not require the user to know prompt terminology.
 
-Do not add analysis, explanations, options, checklists, or next steps.
+Infer reasonable defaults and state them briefly. Ask at most one concise question only when the missing answer would materially change the result. Otherwise proceed. Never claim to see a missing asset.
 
-## Build the micro-scene
+## Decide the production shape
 
-Treat the request as one complete facial-performance beat:
+Before writing, silently determine:
 
-```text
-Starting pose → eye contact and micro-expression → short spoken line → visible emotional aftertaste
-```
+1. Generation mode: text-to-video, image-to-video, first/last frame, or multi-reference.
+2. Story mode: dialogue, action, atmosphere, advertisement, vlog, animation, or mixed.
+3. Structure: single continuous shot or multiple shots within one generation.
+4. Duration: use the user's duration; otherwise choose a sensible duration up to 15 seconds per generation.
+5. Segmentation: split only when the story exceeds one generation's capacity.
 
-- Use one continuous shot unless the user explicitly requests a cut.
-- Use the requested duration. For one short line, default to 5 seconds when duration is omitted.
-- Keep movement minimal and observable: breathing, one blink, slight finger relaxation, a small gaze adjustment, natural lip movement, and a restrained final smile or reaction.
-- Prioritize the face. State the opening shot size, camera height, subject orientation, supporting-hand position if present, slow push-in only when useful, and stable final-frame state.
-- Describe natural light, realistic pores, fine facial hair, iris texture, pupils, individual eyelashes, lip texture, and minor skin variation. Do not demand impossible simultaneous macro sharpness across the entire face; keep both eyes and eyelashes as the focus plane.
+Define each segment as a complete micro-event or emotional beat. Prefer longer coherent segments when complexity remains controllable. Never split the same unfinished composition, pose, action phase, or emotional state across independent generations. Put segment boundaries at a visible change of shot size, viewpoint, location, time, subject, or completed action.
 
-## Reference handling
+## Reference rules
 
-When an image is provided, begin the Chinese prompt with `图1作为人物参考。` and the English prompt with `Picture 1 as the character reference.` Use the image only to preserve visible identity: exact face, eye shape and color, hairstyle, hair color, facial proportions, body proportions, and overall appearance. Ignore source background, pose, watermark, interface text, and compression artifacts unless the user explicitly wants them.
-
-Never claim to see an unavailable image. If the user refers to a missing reference image, return exactly:
+When references exist, list upload order before the prompt:
 
 ```text
-NEEDS_INPUT: 请上传人物参考原图。
+图片上传顺序：
+@图片1：人物主参考，锁定面容、发型、服装和体型
+@图片2：场景参考，锁定空间、色彩和光线方向
 ```
 
-## Required production content
+Use only references actually provided. State which image is primary when references conflict. Preserve requested identity, clothing, props, movement direction, lighting, axis, and continuity. Ignore unwanted source backgrounds, poses, watermarks, interface text, and compression artifacts.
 
-Keep both language versions semantically aligned and include, in this order:
+## Write observable instructions
 
-1. Reference definition when applicable.
-2. Video specifications: duration, ratio, resolution when provided, photorealistic live action, continuous shot.
-3. Character blocking before the shot description.
-4. One numbered close-up shot describing pose, face, micro-actions, spoken dialogue, lip sync, and final state.
-5. Voice profile, `overall_soundscape`, and `non_diegetic_music: N/A` unless music is explicitly requested.
-6. Visual requirements and prohibitions.
-7. Mandatory identity-stability declaration when a character reference is supplied.
+Write in this order:
 
-Keep user-provided dialogue unchanged in both versions. In the English prompt, wrap the spoken line as `<d>[Chinese] 用户原话</d>` when the line is Chinese. Do not translate dialogue.
+1. Subject and the one core event.
+2. Scene and continuity state.
+3. Timeline or shot flow with concrete actions, reactions, and endpoints.
+4. Camera behavior serving the story.
+5. Lighting, color, texture, and visual style.
+6. Spoken dialogue, lip sync, ambience, action sounds, and music.
+7. Stability and negative constraints.
 
-## Stability constraints
+Use visible, generatable descriptions. Replace vague words such as “震撼”, “高级”, or “电影感” with specific composition, motion, color, lighting, rhythm, and texture. Keep each shot's action load low enough to generate reliably.
 
-Always prohibit subtitles, captions, dialogue text, other screen text, logos, and watermarks. All dialogue must be spoken naturally.
+For action, describe direction, body weight, cause, reaction, environment interaction, and finishing pose. For dialogue, describe gaze, breathing, pauses, micro-expression, vocal tone, exact dialogue, and lip sync. For transitions, identify a visible matching element rather than saying only “丝滑转场”.
 
-When a character image is supplied, prohibit face replacement, identity drift, eye-shape change, pupil drift, crossed eyes, hairstyle change, face-shape change, body-proportion change, malformed hands, extra fingers, lip deformation, and lip-sync errors.
+## Default output
 
-For realism, prohibit beauty smoothing, plastic skin, excessive sharpening, exaggerated catchlights, artificial giant eyes, commercial glamour lighting, theatrical acting, and strong camera shake. Preserve natural skin texture without making blemishes grotesque.
+For a simple request, return only:
 
-Use quiet diegetic ambience appropriate to the location, plus breathing, subtle fabric or hair movement, and the character's voice. Set `non_diegetic_music: N/A` by default.
+```text
+【任务设定】
+时长｜比例｜模式｜核心事件
+
+【图片上传顺序】
+仅在有参考图时输出
+
+【MiniMax H3 主提示词】
+完整、可复制的中文生产提示词
+
+【防错约束】
+简短列出最相关的限制
+```
+
+For a story, script, or request longer than one generation, return:
+
+```text
+【整体设定】
+角色、场景、画面、声音和跨段连续性锚点
+
+【第1段｜时长｜完整事件名称】
+图片引用
+H3 主提示词
+尾帧状态与下一段切点
+
+【第2段｜时长｜完整事件名称】
+...
+```
+
+Do not mechanically add sections that provide no value. If the user asks for only the final prompt, omit explanations. If bilingual output is requested, provide aligned Chinese and English versions and preserve dialogue in its original language.
+
+## Sound and text rules
+
+- Keep exact user dialogue unchanged unless asked to rewrite it.
+- State who speaks, when, vocal emotion, pause, and lip synchronization.
+- Distinguish diegetic ambience and action sounds from non-diegetic music.
+- Default to no subtitles, captions, logos, watermarks, or screen text unless explicitly requested.
+- When screen text is requested, specify exact content, placement, timing, and disappearance.
+
+## Reliability constraints
+
+Add only constraints relevant to the scene. Common failures include identity drift, face change, clothing change, prop duplication, malformed hands, extra fingers, crossed eyes, lip-sync errors, teleporting action, axis reversal, camera jumps, inconsistent lighting, unwanted text, and style drift.
+
+Never promise guaranteed success. When an input is overloaded, reduce simultaneous actions, simplify the camera, or split at a genuine visual boundary.
